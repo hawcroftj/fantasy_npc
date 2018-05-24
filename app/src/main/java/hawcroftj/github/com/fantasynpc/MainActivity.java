@@ -4,9 +4,14 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,11 +21,14 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     //DatabaseHelper db;
     TextView tvRace, tvSpeed, tvAge, tvLanguages, tvTraits;
+    Spinner spRaces;
     Button btnRandom;
+
+    String selectedRace;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,15 +38,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // create new database
         //db = new DatabaseHelper(this);
 
-        // initialize
+        //region Initialize UI Elements
         tvRace = findViewById(R.id.tvRace);
         tvSpeed = findViewById(R.id.tvSpeed);
         tvAge = findViewById(R.id.tvAge);
         tvLanguages = findViewById(R.id.tvLanguages);
         tvTraits = findViewById(R.id.tvTraits);
 
+        spRaces = findViewById(R.id.spRaces);
         btnRandom = findViewById(R.id.btnRandom);
-        btnRandom.setOnClickListener(this);
+        //endregion Initialize UI Elements
 
         // load json data from asset files
         //String json = loadJSONFromAsset(getApplicationContext(), /* FILE_NAME /*);
@@ -48,6 +57,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onStart() {
         super.onStart();
 
+        //region Set Defaults
+        selectedRace = "random";
+        //endregion Set Defaults
+
+        // further preparation for UI elements
+        btnRandom.setOnClickListener(this);
+        spRaces.setOnItemSelectedListener(this);
+        // create adapter for race selection spinner
+        ArrayAdapter<CharSequence> racesAdapter = ArrayAdapter.createFromResource(
+                this,
+                R.array.races_array,
+                android.R.layout.simple_spinner_item);
+        racesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spRaces.setAdapter(racesAdapter);
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        // alter selected race based on user input
+        selectedRace = parent.getItemAtPosition(position).toString();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+        Toast.makeText(this, "Please select a race.", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -55,7 +89,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch(v.getId()) {
             case R.id.btnRandom:
                 // generate a random character and display it's information in activity
-                Character newCharacter = generateNewCharacter();
+                Character newCharacter = generateNewCharacter(selectedRace.toLowerCase());
                 displayCharacterInfo(newCharacter);
                 break;
         }
@@ -78,13 +112,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 "Traits: %s", Arrays.toString(newCharacter.getTraits())));
     }
 
-    private Character generateNewCharacter() {
+    /**
+     *
+     * @return
+     */
+    private Character generateNewCharacter(String selectedRace) {
         String race;
         String[] languages, traits;
         int speed, age;
 
         // TODO generate character from user selected race, class, etc.
-        String raceData = loadJSONFromAsset(getApplicationContext(), "human.json");
+        String raceData = loadJSONFromAsset(getApplicationContext(), selectedRace);
         Character character = null;
         JSONObject object = null;
         try {
@@ -104,11 +142,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return character;
     }
 
+    /**
+     *
+     * @param context
+     * @param fileName
+     * @return
+     */
     private String loadJSONFromAsset(Context context, String fileName) {
         String json = null;
+        String fullFileNameWithType = "races/" + fileName + ".json";
         try {
             // open specified json asset file and fill buffer with data
-            InputStream stream = context.getAssets().open("races/" + fileName);
+            InputStream stream = context.getAssets().open(fullFileNameWithType);
             byte[] buffer = new byte[stream.available()];
             stream.read(buffer);
             stream.close();

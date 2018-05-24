@@ -2,4 +2,17 @@
     <string name="app_name">FantasyNPC</string>
 
     <string name="random">Generate Random NPC</string>
+
+    <string-array name="races_array">
+        <item>Random</item>
+        <item>Dragonborn</item>
+        <item>Dwarf</item>
+        <item>Elf</item>
+        <item>Gnome</item>
+        <item>Half-Elf</item>
+        <item>Halfling</item>
+        <item>Half-Orc</item>
+        <item>Human</item>
+        <item>Tiefling</item>
+    </string-array>
 </resources>
