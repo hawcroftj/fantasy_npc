@@ -24,7 +24,7 @@ import java.util.Arrays;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     //DatabaseHelper db;
-    TextView tvRace, tvSpeed, tvAge, tvLanguages, tvTraits;
+    TextView tvRace, tvAbilities, tvSpeed, tvAge, tvLanguages, tvTraits;
     Spinner spRaces;
     Button btnRandom;
 
@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //region Initialize UI Elements
         tvRace = findViewById(R.id.tvRace);
+        tvAbilities = findViewById(R.id.tvAbilities);
         tvSpeed = findViewById(R.id.tvSpeed);
         tvAge = findViewById(R.id.tvAge);
         tvLanguages = findViewById(R.id.tvLanguages);
@@ -96,12 +97,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     * Displays
-     * @param newCharacter
+     * Populates TextView elements with character data.
+     * @param newCharacter The character containing data to be displayed.
      */
     private void displayCharacterInfo(Character newCharacter) {
         tvRace.setText(String.format(
                 "Race: %s", newCharacter.getRace()));
+        tvAbilities.setText(String.format(
+                "Abilities: %s", Arrays.toString(newCharacter.getAbilities())));
         tvSpeed.setText(String.format(
                 "Speed: %s", String.valueOf(newCharacter.getSpeed())));
         tvAge.setText(String.format(
@@ -118,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      */
     private Character generateNewCharacter(String selectedRace) {
         String race;
-        String[] languages, traits;
+        String[] abilities, languages, traits;
         int speed, age;
 
         // TODO generate character from user selected race, class, etc.
@@ -130,12 +133,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // extract information required to generate new character
             object = new JSONObject(raceData);
             race = object.get("name").toString().trim();
+            abilities = object.get("ability_bonuses").toString().trim().split(",");
             languages = object.get("languages").toString().trim().split(",");
             traits = object.get("traits").toString().trim().split(",");
             speed = Integer.parseInt(object.get("speed").toString().trim());
             age = Integer.parseInt(object.get("age").toString().trim());
             // create the character
-            character = new Character(race, languages, traits, age, speed);
+            character = new Character(race, abilities, languages, traits, age, speed);
         } catch (JSONException e) {
             e.printStackTrace();
         }

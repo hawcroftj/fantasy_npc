@@ -6,13 +6,15 @@ package hawcroftj.github.com.fantasynpc;
 
 public class Character {
     private String race;
+    private String[] abilities;
     private String[] languages;
     private String[] traits;
     private int age;
     private int speed;
 
-    public Character(String race, String[] languages, String[] traits, int age, int speed) {
+    public Character(String race, String[] abilities, String[] languages, String[] traits, int age, int speed) {
         this.race = race;
+        this.abilities = abilities;
         this.languages = languages;
         this.traits = traits;
         this.age = age;
@@ -30,6 +32,10 @@ public class Character {
     public void setRace(String race) {
         this.race = race;
     }
+
+    public String[] getAbilities() { return abilities; }
+
+    public void setAbilities(String[] abilities) { this.abilities = abilities; }
 
     public String[] getLanguages() {
         return languages;
