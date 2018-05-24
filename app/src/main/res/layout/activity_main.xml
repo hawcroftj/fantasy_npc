@@ -7,6 +7,12 @@
     android:orientation="vertical"
     tools:context="hawcroftj.github.com.fantasynpc.MainActivity">
 
+    <Button
+        android:id="@+id/btnRandom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/random"/>
+
     <TextView
         android:id="@+id/tvRace"
         android:layout_width="wrap_content"
