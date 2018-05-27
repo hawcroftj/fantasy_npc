@@ -20,15 +20,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
-    //DatabaseHelper db;
-    TextView tvRace, tvAbilities, tvSpeed, tvAge, tvLanguages, tvTraits;
-    Spinner spRaces;
-    Button btnRandom;
+    // DEVELOPMENT LOG TAG(S)
+    private static String TAG = "FantasyNPC_log";
 
-    String selectedRace;
+    //DatabaseHelper db;
+    private TextView tvRace, tvAbilities, tvSpeed, tvAge, tvLanguages, tvTraits;
+    private Spinner spRaces;
+    private Button btnRandom;
+
+    private static String DEFAULT_RACE = "random";
+    private String[] availableRaces;
+    private Random randomRaceSelector;
+    private String selectedRace;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,15 +58,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //endregion Initialize UI Elements
 
         // load json data from asset files
-        //String json = loadJSONFromAsset(getApplicationContext(), /* FILE_NAME /*);
+        //String json = loadJSONFromAsset(getApplicationContext (), /* FILE_NAME /*);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        //region Set Defaults
-        selectedRace = "random";
+        //region Retrieve Races and Set Defaults
+        availableRaces = this.getResources().getStringArray(R.array.races_array);
+        randomRaceSelector = new Random();
+        selectedRace = DEFAULT_RACE;
         //endregion Set Defaults
 
         // further preparation for UI elements
@@ -89,10 +98,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.btnRandom:
+                if(selectedRace.toLowerCase().equals("random")) {
+                    // select a random race from the list of available races
+                    selectedRace = availableRaces[randomRaceSelector.nextInt(availableRaces.length - 1) + 1];
+                }
                 // generate a random character and display it's information in activity
                 Character newCharacter = generateNewCharacter(selectedRace.toLowerCase());
                 displayCharacterInfo(newCharacter);
-                break;
+                // reset the selected race to default
+                selectedRace = DEFAULT_RACE;
         }
     }
 
