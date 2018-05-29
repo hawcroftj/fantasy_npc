@@ -1,24 +1,17 @@
 package hawcroftj.github.com.fantasynpc;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
@@ -119,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int speed, age;
 
         // TODO generate character from user selected race, class, etc.
-        String raceData = loadRaceDataFromJSONSource(selectedRace);
+        String raceData = Utility.loadRaceDataFromJSONSource(getApplicationContext(), selectedRace);
         Character character = null;
         JSONObject object = null;
         try {
@@ -160,45 +153,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         lastName = lastNames[randomNameSelector.nextInt(lastNames.length)];
 
         return new String[]{firstName, lastName};
-    }
-
-    /**
-     * Loads race data from json asset files, making modifications to the selectedRace String
-     * to match json file naming conventions. (See comments)
-     * @param selectedRace The user-specified race to be used in character generation.
-     * @return String containing race-specific information.
-     */
-    private String loadRaceDataFromJSONSource(String selectedRace) {
-        // due to the simple adapter used for racesAdapter, and the json file naming convention,
-        // space characters (' ') must become a hyphen ('-') in addition to forcing lowercase.
-        // (i.e. "Hill Dwarf" becomes "hill-dwarf")
-        if(selectedRace.trim().contains(" ")) {
-            selectedRace = selectedRace.trim().replace(" ", "-");
-        }
-        // race data is located in the assets/races/ directory, so it is added as a prefix to the race filename
-        return loadJSONFromAsset(getApplicationContext(), "races/" + selectedRace.toLowerCase());
-    }
-
-    /**
-     * Loads data from a json file located in the assets folder.
-     * @param context The application context.
-     * @param fileName The name of a json file that will be read.
-     * @return String containing data read from json asset file.
-     */
-    private String loadJSONFromAsset(Context context, String fileName) {
-        String json = null;
-        String fullFileNameWithType = fileName + ".json";
-        try {
-            // open specified json asset file and fill buffer with data
-            InputStream stream = context.getAssets().open(fullFileNameWithType);
-            byte[] buffer = new byte[stream.available()];
-            stream.read(buffer);
-            stream.close();
-            json = new String(buffer, "UTF-8");
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return json;
     }
 }
