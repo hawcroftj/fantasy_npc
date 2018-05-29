@@ -96,15 +96,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch(v.getId()) {
             case R.id.btnRandom:
+                boolean randomFlag = false;
                 if(selectedRace.toLowerCase().equals("random")) {
                     // select a random race from the list of available races
                     selectedRace = availableRaces[randomRaceSelector.nextInt(availableRaces.length - 1) + 1];
+                    randomFlag = true;
                 }
                 // generate a random character and display it's information in activity
                 Character newCharacter = generateNewCharacter(selectedRace);
                 displayCharacterInfo(newCharacter);
-                // reset the selected race to default
-                selectedRace = DEFAULT_RACE;
+
+                // if random race was selected, reset the selected race to default
+                selectedRace = randomFlag ? DEFAULT_RACE : selectedRace;
         }
     }
 

@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">FantasyNPC</string>
 
+    <string name="placeholder">This is placeholder text.</string>
+
+    <string name="select_race">Select a Race</string>
     <string name="random">Generate Random NPC</string>
 
     <string-array name="races_array">
