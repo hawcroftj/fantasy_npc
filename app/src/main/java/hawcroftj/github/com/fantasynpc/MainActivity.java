@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,21 +17,20 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
-    // DEVELOPMENT LOG TAG(S)
-    private static String TAG = "FantasyNPC_log";
+    // class-level constants
+    private static String TAG = "FantasyNPC_log";   // Logcat tag
+    private static String DEFAULT_RACE = "random";  // default race
 
     //DatabaseHelper db;
     private TextView tvRace, tvAbilities, tvSpeed, tvAge, tvLanguages, tvTraits;
     private Spinner spRaces;
     private Button btnRandom;
 
-    private static String DEFAULT_RACE = "random";
     private String[] availableRaces;
     private Random randomRaceSelector;
     private String selectedRace;
@@ -103,7 +101,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     selectedRace = availableRaces[randomRaceSelector.nextInt(availableRaces.length - 1) + 1];
                 }
                 // generate a random character and display it's information in activity
-                Character newCharacter = generateNewCharacter(selectedRace.toLowerCase());
+                Character newCharacter = generateNewCharacter(selectedRace);
                 displayCharacterInfo(newCharacter);
                 // reset the selected race to default
                 selectedRace = DEFAULT_RACE;
@@ -139,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         int speed, age;
 
         // TODO generate character from user selected race, class, etc.
-        String raceData = loadJSONFromAsset(getApplicationContext(), selectedRace);
+        String raceData = loadRaceDataFromJSONSource(selectedRace);
         Character character = null;
         JSONObject object = null;
         try {
@@ -158,6 +156,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace();
         }
         return character;
+    }
+
+    /**
+     *
+     * @param selectedRace
+     * @return
+     */
+    private String loadRaceDataFromJSONSource(String selectedRace) {
+        // due to the simple adapter used for racesAdapter, and the json file naming convention,
+        // space characters (' ') must become a hyphen ('-') in addition to forcing lowercase.
+        // (i.e. "Hill Dwarf" becomes "hill-dwarf")
+        if(selectedRace.trim().contains(" ")) {
+            selectedRace = selectedRace.trim().replace(" ", "-");
+        }
+        return loadJSONFromAsset(getApplicationContext(), selectedRace.toLowerCase());
     }
 
     /**

@@ -6,11 +6,16 @@
     <string-array name="races_array">
         <item>Random</item>
         <item>Dragonborn</item>
-        <item>Dwarf</item>
-        <item>Elf</item>
-        <item>Gnome</item>
+        <item>Hill Dwarf</item>
+        <item>Mountain Dwarf</item>
+        <item>Dark Elf</item>
+        <item>High Elf</item>
+        <item>Wood Elf</item>
+        <item>Forest Gnome</item>
+        <item>Rock Gnome</item>
         <item>Half-Elf</item>
-        <item>Halfling</item>
+        <item>Lightfoot Halfling</item>
+        <item>Stout Halfling</item>
         <item>Half-Orc</item>
         <item>Human</item>
         <item>Tiefling</item>
