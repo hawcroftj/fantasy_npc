@@ -1,10 +1,13 @@
 package hawcroftj.github.com.fantasynpc;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  *
  */
 
-public class Character {
+public class Character implements Parcelable {
     private String race;
     private String[] abilities;
     private String[] languages;
@@ -24,6 +27,47 @@ public class Character {
     public Character() {
 
     }
+
+    //region Parcelable Implementation
+    protected Character(Parcel in) {
+        race = in.readString();
+        abilities = in.createStringArray();
+        languages = in.createStringArray();
+        traits = in.createStringArray();
+        age = in.readInt();
+        speed = in.readInt();
+    }
+
+    // parcelable write
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(race);
+        dest.writeStringArray(abilities);
+        dest.writeStringArray(languages);
+        dest.writeStringArray(traits);
+        dest.writeInt(age);
+        dest.writeInt(speed);
+    }
+
+    // parcelable describe
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    // parcelable creator
+    public static final Creator<Character> CREATOR = new Creator<Character>() {
+        @Override
+        public Character createFromParcel(Parcel in) {
+            return new Character(in);
+        }
+
+        @Override
+        public Character[] newArray(int size) {
+            return new Character[size];
+        }
+    };
+    //endregion Parcelable Implementation
 
     public String getRace() {
         return race;

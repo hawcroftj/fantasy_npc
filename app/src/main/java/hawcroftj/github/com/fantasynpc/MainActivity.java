@@ -1,6 +1,7 @@
 package hawcroftj.github.com.fantasynpc;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,7 +28,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static String DEFAULT_RACE = "random";  // default race
 
     //DatabaseHelper db;
-    private TextView tvRace, tvAbilities, tvSpeed, tvAge, tvLanguages, tvTraits;
     private Spinner spRaces;
     private Button btnRandom;
 
@@ -43,17 +43,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         // create new database
         //db = new DatabaseHelper(this);
 
-        //region Initialize UI Elements
-        tvRace = findViewById(R.id.tvRace);
-        tvAbilities = findViewById(R.id.tvAbilities);
-        tvSpeed = findViewById(R.id.tvSpeed);
-        tvAge = findViewById(R.id.tvAge);
-        tvLanguages = findViewById(R.id.tvLanguages);
-        tvTraits = findViewById(R.id.tvTraits);
-
         spRaces = findViewById(R.id.spRaces);
         btnRandom = findViewById(R.id.btnRandom);
-        //endregion Initialize UI Elements
 
         // load json data from asset files
         //String json = loadJSONFromAsset(getApplicationContext (), /* FILE_NAME /*);
@@ -82,6 +73,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        // return to random race when activity resumes
+        selectedRace = DEFAULT_RACE;
+    }
+
+    @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         // alter selected race based on user input
         selectedRace = parent.getItemAtPosition(position).toString();
@@ -94,40 +92,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()) {
+        switch (v.getId()) {
             case R.id.btnRandom:
-                boolean randomFlag = false;
-                if(selectedRace.toLowerCase().equals("random")) {
+                if (selectedRace.toLowerCase().equals("random")) {
                     // select a random race from the list of available races
                     selectedRace = availableRaces[randomRaceSelector.nextInt(availableRaces.length - 1) + 1];
-                    randomFlag = true;
                 }
                 // generate a random character and display it's information in activity
                 Character newCharacter = generateNewCharacter(selectedRace);
-                displayCharacterInfo(newCharacter);
-
-                // if random race was selected, reset the selected race to default
-                selectedRace = randomFlag ? DEFAULT_RACE : selectedRace;
+                Intent displayCharacter = new Intent(this, DisplayCharacter.class);
+                displayCharacter.putExtra("character", newCharacter);
+                startActivity(displayCharacter);
         }
-    }
-
-    /**
-     * Populates TextView elements with character data.
-     * @param newCharacter The character containing data to be displayed.
-     */
-    private void displayCharacterInfo(Character newCharacter) {
-        tvRace.setText(String.format(
-                "Race: %s", newCharacter.getRace()));
-        tvAbilities.setText(String.format(
-                "Abilities: %s", Arrays.toString(newCharacter.getAbilities())));
-        tvSpeed.setText(String.format(
-                "Speed: %s", String.valueOf(newCharacter.getSpeed())));
-        tvAge.setText(String.format(
-                "Age: %s", String.valueOf(newCharacter.getAge())));
-        tvLanguages.setText(String.format(
-                "Languages: %s", Arrays.toString(newCharacter.getLanguages())));
-        tvTraits.setText(String.format(
-                "Traits: %s", Arrays.toString(newCharacter.getTraits())));
     }
 
     /**
