@@ -128,8 +128,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     *
-     * @return
+     * Generates a new character using data from asset files.
+     * @return Character object containing relevant character information (race, class, etc.)
      */
     private Character generateNewCharacter(String selectedRace) {
         String race;
@@ -159,9 +159,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     /**
-     *
-     * @param selectedRace
-     * @return
+     * Loads race data from json asset files, making modifications to the selectedRace String
+     * to match json file naming conventions. (See comments)
+     * @param selectedRace The user-specified race to be used in character generation.
+     * @return String containing race-specific information.
      */
     private String loadRaceDataFromJSONSource(String selectedRace) {
         // due to the simple adapter used for racesAdapter, and the json file naming convention,
@@ -170,18 +171,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(selectedRace.trim().contains(" ")) {
             selectedRace = selectedRace.trim().replace(" ", "-");
         }
-        return loadJSONFromAsset(getApplicationContext(), selectedRace.toLowerCase());
+        // race data is located in the assets/races/ directory, so it is added as a prefix to the race filename
+        return loadJSONFromAsset(getApplicationContext(), "races/" + selectedRace.toLowerCase());
     }
 
     /**
-     *
-     * @param context
-     * @param fileName
-     * @return
+     * Loads data from a json file located in the assets folder.
+     * @param context The application context.
+     * @param fileName The name of a json file that will be read.
+     * @return String containing data read from json asset file.
      */
     private String loadJSONFromAsset(Context context, String fileName) {
         String json = null;
-        String fullFileNameWithType = "races/" + fileName + ".json";
+        String fullFileNameWithType = fileName + ".json";
         try {
             // open specified json asset file and fill buffer with data
             InputStream stream = context.getAssets().open(fullFileNameWithType);
