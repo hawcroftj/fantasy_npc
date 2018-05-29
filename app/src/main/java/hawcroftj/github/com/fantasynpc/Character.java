@@ -9,14 +9,21 @@ import android.os.Parcelable;
 
 public class Character implements Parcelable {
     private String race;
+    private String sex;
+    private String firstName;
+    private String lastName;
     private String[] abilities;
     private String[] languages;
     private String[] traits;
     private int age;
     private int speed;
 
-    public Character(String race, String[] abilities, String[] languages, String[] traits, int age, int speed) {
+    public Character(String race, String sex, String firstName, String lastName,
+                     String[] abilities, String[] languages, String[] traits, int age, int speed) {
         this.race = race;
+        this.sex = sex;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.abilities = abilities;
         this.languages = languages;
         this.traits = traits;
@@ -31,6 +38,9 @@ public class Character implements Parcelable {
     //region Parcelable Implementation
     protected Character(Parcel in) {
         race = in.readString();
+        sex = in.readString();
+        firstName = in.readString();
+        lastName = in.readString();
         abilities = in.createStringArray();
         languages = in.createStringArray();
         traits = in.createStringArray();
@@ -42,6 +52,9 @@ public class Character implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(race);
+        dest.writeString(sex);
+        dest.writeString(firstName);
+        dest.writeString(lastName);
         dest.writeStringArray(abilities);
         dest.writeStringArray(languages);
         dest.writeStringArray(traits);
@@ -76,6 +89,18 @@ public class Character implements Parcelable {
     public void setRace(String race) {
         this.race = race;
     }
+
+    public String getSex() { return sex; }
+
+    public void setSex(String sex) { this.sex = sex; }
+
+    public String getFirstName() { return firstName; }
+
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+
+    public String getLastName() { return lastName; }
+
+    public void setLastName(String lastName) { this.lastName = lastName; }
 
     public String[] getAbilities() { return abilities; }
 

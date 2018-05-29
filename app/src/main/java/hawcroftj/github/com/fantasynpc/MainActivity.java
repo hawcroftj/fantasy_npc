@@ -24,8 +24,9 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     // class-level constants
-    private static String TAG = "FantasyNPC_log";   // Logcat tag
-    private static String DEFAULT_RACE = "random";  // default race
+    private static String TAG = "FantasyNPC_log";       // Logcat tag
+    private static String DEFAULT_RACE = "random";      // default race
+    private static String[] SEX = {"Male", "Female"};   // available sexes
 
     //DatabaseHelper db;
     private Spinner spRaces;
@@ -33,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private String[] availableRaces;
     private Random randomRaceSelector;
+    private Random randomNameSelector;
     private String selectedRace;
 
     @Override
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //region Retrieve Races and Set Defaults
         availableRaces = this.getResources().getStringArray(R.array.races_array);
         randomRaceSelector = new Random();
+        randomNameSelector = new Random();
         selectedRace = DEFAULT_RACE;
         //endregion Set Defaults
 
@@ -111,8 +114,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * @return Character object containing relevant character information (race, class, etc.)
      */
     private Character generateNewCharacter(String selectedRace) {
-        String race;
-        String[] abilities, languages, traits;
+        String race, sex;
+        String[] firstNames, lastNames, abilities, languages, traits;
         int speed, age;
 
         // TODO generate character from user selected race, class, etc.
@@ -124,17 +127,39 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // extract information required to generate new character
             object = new JSONObject(raceData);
             race = object.get("name").toString().trim();
+            sex = SEX[0];                                                                           // TODO implement female sex
             abilities = object.get("ability_bonuses").toString().trim().split(",");
             languages = object.get("languages").toString().trim().split(",");
             traits = object.get("traits").toString().trim().split(",");
             speed = Integer.parseInt(object.get("speed").toString().trim());
             age = Integer.parseInt(object.get("age").toString().trim());
+
+            // select a random sex-specific name from first and last name String arrays
+            firstNames = object.get("first_names_" + sex.toLowerCase()).toString().trim().split(",");        // TODO
+            lastNames = object.get("last_names").toString().trim().split(",");                               // TODO
+            String[] characterName = createCharacterName(firstNames, lastNames);                                   // TODO
+
             // create the character
-            character = new Character(race, abilities, languages, traits, age, speed);
+            character = new Character(race, sex, characterName[0], characterName[1], abilities, languages, traits, age, speed);
         } catch (JSONException e) {
             e.printStackTrace();
         }
         return character;
+    }
+
+    /**
+     * Selects a first and last name for a new Character from a list of race-specific names.
+     * @param firstNames The list of available race-specific first names.
+     * @param lastNames The list of available race-specific first names.
+     * @return String array containing a first and last name.
+     */
+    private String[] createCharacterName(String[] firstNames, String[] lastNames) {
+        String firstName, lastName;
+        // select a random first and last name from available names
+        firstName = firstNames[randomNameSelector.nextInt(firstNames.length)];
+        lastName = lastNames[randomNameSelector.nextInt(lastNames.length)];
+
+        return new String[]{firstName, lastName};
     }
 
     /**

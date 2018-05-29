@@ -9,7 +9,7 @@ import java.util.Arrays;
 
 public class DisplayCharacter extends AppCompatActivity {
 
-    private TextView tvRace, tvAbilities, tvSpeed, tvAge, tvLanguages, tvTraits;
+    private TextView tvRace, tvSex, tvName, tvAbilities, tvSpeed, tvAge, tvLanguages, tvTraits;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +18,8 @@ public class DisplayCharacter extends AppCompatActivity {
 
         // initialize UI elements
         tvRace = findViewById(R.id.tvRace);
+        tvSex = findViewById(R.id.tvSex);
+        tvName = findViewById(R.id.tvName);
         tvAbilities = findViewById(R.id.tvAbilities);
         tvSpeed = findViewById(R.id.tvSpeed);
         tvAge = findViewById(R.id.tvAge);
@@ -33,8 +35,12 @@ public class DisplayCharacter extends AppCompatActivity {
      * Populates TextView elements with character data.
      */
     private void displayCharacterInfo(Character character) {
+        tvName.setText(String.format(
+                "Name: %s %s", character.getFirstName(), character.getLastName()));
         tvRace.setText(String.format(
                 "Race: %s", character.getRace()));
+        tvSex.setText(String.format(
+                "Sex: %s", character.getSex()));
         tvAbilities.setText(String.format(
                 "Abilities: %s", Arrays.toString(character.getAbilities())));
         tvSpeed.setText(String.format(
