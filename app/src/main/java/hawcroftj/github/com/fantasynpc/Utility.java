@@ -49,4 +49,31 @@ public final class Utility {
         // race data is located in the assets/races/ directory, so it is added as a prefix to the race filename
         return Utility.loadJSONFromAsset(context, "races/" + selectedRace.toLowerCase());
     }
+
+    /**
+     * Removes 'dirty' json characters from Character information Strings.
+     * @param string The String to be cleaned.
+     * @return The clean String.
+     */
+    public static String cleanString(String string) {
+        string = string.trim().replace("[", "")
+                .replace("]", "").replace("{", "")
+                .replace("}", "").replace("\"", "").replace(",", "")
+                .replace("description:", "").replace("name:", "");
+        return string;
+    }
+
+    /**
+     * Removes 'dirty' json characters from Character information String arrays.
+     * @param dirtyStringArr The String array to be cleaned.
+     * @return The clean String array.
+     */
+    public static String[] cleanString(String[] dirtyStringArr) {
+        String[] cleanedStringArr = new String[dirtyStringArr.length];
+        // iterate through and clean each String in the dirty array
+        for(int i = 0; i < dirtyStringArr.length - 1; i++) {
+            cleanedStringArr[i] = cleanString(dirtyStringArr[i]);
+        }
+        return cleanedStringArr;
+    }
 }

@@ -6,6 +6,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import java.util.Arrays;
+import java.util.Random;
 
 public class DisplayCharacter extends AppCompatActivity {
 
@@ -35,21 +36,30 @@ public class DisplayCharacter extends AppCompatActivity {
      * Populates TextView elements with character data.
      */
     private void displayCharacterInfo(Character character) {
-        tvName.setText(String.format(
-                "Name: %s %s", character.getFirstName(), character.getLastName()));
-        tvRace.setText(String.format(
-                "Race: %s", character.getRace()));
-        tvSex.setText(String.format(
-                "Sex: %s", character.getSex()));
-        tvAbilities.setText(String.format(
-                "Abilities: %s", Arrays.toString(character.getAbilities())));
-        tvSpeed.setText(String.format(
-                "Speed: %s", String.valueOf(character.getSpeed())));
-        tvAge.setText(String.format(
-                "Age: %s", String.valueOf(character.getAge())));
-        tvLanguages.setText(String.format(
-                "Languages: %s", Arrays.toString(character.getLanguages())));
-        tvTraits.setText(String.format(
-                "Traits: %s", Arrays.toString(character.getTraits())));
+         //set TextView text to the appropriate Character info
+        tvName.setText(String.format("%s %s", character.getFirstName(), character.getLastName()));
+        tvAge.setText(String.format("%s year old ", String.valueOf(character.getAge())));
+        tvSex.setText(String.format("%s ", character.getSex().toLowerCase()));
+        tvRace.setText(String.format("%s", character.getRace()));
+        tvSpeed.setText(String.format("%s", String.valueOf(character.getSpeed())));
+
+        // format Character abilities be displayed
+        String[] abilities = character.getAbilities();
+        String[] abilityNames = {"STR:", "DEX:", "CON:", "INT:", "WIS:", "CHA:"};
+        StringBuilder abilitiesString = new StringBuilder();
+        for(int i = 0; i < abilities.length; i++) {
+            abilitiesString.append(String.format("%s %s ", abilityNames[i], abilities[i]));
+        }
+        tvAbilities.setText(abilitiesString.toString());
+        tvLanguages.setText(formatArrayForText(character.getLanguages()));
+        tvTraits.setText(formatArrayForText(character.getTraits()));
+    }
+
+    private String formatArrayForText(String[] stringArr) {
+        StringBuilder builder = new StringBuilder();
+        for(int i = 0; i < stringArr.length; i++) {
+            builder.append(stringArr[i] + ",\n");
+        }
+        return builder.toString();
     }
 }

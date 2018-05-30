@@ -28,6 +28,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String[] availableRaces;
     private Random randomRaceSelector;
     private Random randomNameSelector;
+    private Random randomAgeSelector;
+    private Random randomSexSelector;
     private String selectedRace;
 
     @Override
@@ -53,6 +55,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         availableRaces = this.getResources().getStringArray(R.array.races_array);
         randomRaceSelector = new Random();
         randomNameSelector = new Random();
+        randomAgeSelector = new Random();
+        randomSexSelector = new Random();
         selectedRace = DEFAULT_RACE;
         //endregion Set Defaults
 
@@ -109,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Character generateNewCharacter(String selectedRace) {
         String race, sex;
         String[] firstNames, lastNames, abilities, languages, traits;
-        int speed, age;
+        int speed, maxAge, age;
 
         // TODO generate character from user selected race, class, etc.
         String raceData = Utility.loadRaceDataFromJSONSource(getApplicationContext(), selectedRace);
@@ -119,18 +123,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             // generate a JSON object from selected race data
             // extract information required to generate new character
             object = new JSONObject(raceData);
-            race = object.get("name").toString().trim();
-            sex = SEX[0];                                                                           // TODO implement female sex
-            abilities = object.get("ability_bonuses").toString().trim().split(",");
-            languages = object.get("languages").toString().trim().split(",");
-            traits = object.get("traits").toString().trim().split(",");
+
+            race = Utility.cleanString(object.get("name").toString());
             speed = Integer.parseInt(object.get("speed").toString().trim());
-            age = Integer.parseInt(object.get("age").toString().trim());
+
+            maxAge = Integer.parseInt(object.get("age").toString());
+            age = randomAgeSelector.nextInt((maxAge - 25) + 15);    // generate age between 15 and maxAge - 10
+            sex = SEX[randomSexSelector.nextInt(2)];                // generates 0 (male) or 1 (female)
+
+            abilities = Utility.cleanString(object.get("ability_bonuses").toString().split(","));
+            languages = Utility.cleanString(object.get("languages").toString().split(","));
+            traits = Utility.cleanString(object.get("traits").toString().split(","));
 
             // select a random sex-specific name from first and last name String arrays
-            firstNames = object.get("first_names_" + sex.toLowerCase()).toString().trim().split(",");        // TODO
-            lastNames = object.get("last_names").toString().trim().split(",");                               // TODO
-            String[] characterName = createCharacterName(firstNames, lastNames);                                   // TODO
+            firstNames = Utility.cleanString(object.get("first_names_" + sex.toLowerCase()).toString().split(","));
+            lastNames = Utility.cleanString(object.get("last_names").toString().split(","));
+            String[] characterName = createCharacterName(firstNames, lastNames);
 
             // create the character
             character = new Character(race, sex, characterName[0], characterName[1], abilities, languages, traits, age, speed);
