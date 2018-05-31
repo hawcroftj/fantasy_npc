@@ -1,12 +1,15 @@
 package hawcroftj.github.com.fantasynpc;
 
 import android.content.Intent;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -14,16 +17,25 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.Random;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener,
+        AdapterView.OnItemSelectedListener,
+        RadioGroup.OnCheckedChangeListener {
 
+    //region Constants and Class Variables
     // class-level constants
-    private static String TAG = "FantasyNPC_log";       // Logcat tag
-    private static String DEFAULT_RACE = "random";      // default race
-    private static String[] SEX = {"Male", "Female"};   // available sexes
+    private static final String TAG = "FantasyNPC_log";             // Logcat tag
+    private static final String DEFAULT_RANDOM = "Random";          // default (random)
+    private static final String SEX_FEMALE = "Female";
+    private static final String SEX_MALE = "Male";
+    private static final String[] SEXES = {SEX_FEMALE, SEX_MALE};   // array of sexes
 
     //DatabaseHelper db;
     private Spinner spRaces;
     private Button btnRandom;
+    private RadioGroup rgSexGroup;
+    private RadioButton rbSexRandom;
+    private RadioButton rbSexFemale;
+    private RadioButton rbSexMale;
 
     private String[] availableRaces;
     private Random randomRaceSelector;
@@ -31,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Random randomAgeSelector;
     private Random randomSexSelector;
     private String selectedRace;
+    private String selectedSex;
+    //endregion Constants and Class Variables
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +56,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         spRaces = findViewById(R.id.spRaces);
         btnRandom = findViewById(R.id.btnRandom);
+        rgSexGroup = findViewById(R.id.rgSexGroup);
+        rbSexRandom = findViewById(R.id.rbSexRandom);
+        rbSexFemale = findViewById(R.id.rbSexFemale);
+        rbSexMale = findViewById(R.id.rbSexMale);
 
         // load json data from asset files
         //String json = loadJSONFromAsset(getApplicationContext (), /* FILE_NAME /*);
@@ -57,26 +75,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         randomNameSelector = new Random();
         randomAgeSelector = new Random();
         randomSexSelector = new Random();
-        selectedRace = DEFAULT_RACE;
+        selectedRace = DEFAULT_RANDOM;              // default race
+        selectedSex = DEFAULT_RANDOM;               // default sex
+        rgSexGroup.check(rbSexRandom.getId());      // default sex checked
         //endregion Set Defaults
 
         // further preparation for UI elements
         btnRandom.setOnClickListener(this);
         spRaces.setOnItemSelectedListener(this);
+        rgSexGroup.setOnCheckedChangeListener(this);
+
         // create adapter for race selection spinner
         ArrayAdapter<CharSequence> racesAdapter = ArrayAdapter.createFromResource(
                 this,
                 R.array.races_array,
                 android.R.layout.simple_spinner_item);
-        racesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        racesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         spRaces.setAdapter(racesAdapter);
     }
 
     @Override
     protected void onPostResume() {
         super.onPostResume();
-        // return to random race when activity resumes
-        selectedRace = DEFAULT_RACE;
+        // return to defaults when activity resumes
+        selectedRace = DEFAULT_RANDOM;
+        selectedRace = DEFAULT_RANDOM;
+        rgSexGroup.check(rbSexRandom.getId());
     }
 
     @Override
@@ -91,15 +115,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        // assign user-selected sex to selectedSex
+        switch(checkedId) {
+            case R.id.rbSexRandom:
+                selectedSex = DEFAULT_RANDOM;
+                break;
+            case R.id.rbSexFemale:
+                selectedSex = SEX_FEMALE;
+                break;
+            case R.id.rbSexMale:
+                selectedSex = SEX_MALE;
+                break;
+        }
+    }
+
+    @Override
     public void onClick(View v) {
-        switch (v.getId()) {
+        switch(v.getId()) {
             case R.id.btnRandom:
-                if (selectedRace.toLowerCase().equals("random")) {
-                    // select a random race from the list of available races
+                if(selectedRace.equals(DEFAULT_RANDOM)) {   // choose a random race
                     selectedRace = availableRaces[randomRaceSelector.nextInt(availableRaces.length - 1) + 1];
                 }
-                // generate a random character and display it's information in activity
-                Character newCharacter = generateNewCharacter(selectedRace);
+                if(selectedSex.equals(DEFAULT_RANDOM)) {    // choose a random sex
+                    selectedSex = SEXES[randomSexSelector.nextInt(2)];
+                }
+                // generate a random character using selected parameters
+                Character newCharacter = generateNewCharacter(selectedRace, selectedSex);
                 Intent displayCharacter = new Intent(this, DisplayCharacter.class);
                 displayCharacter.putExtra("character", newCharacter);
                 startActivity(displayCharacter);
@@ -108,10 +150,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     /**
      * Generates a new character using data from asset files.
+     * @param selectedRace The new Character race.
+     * @param selectedSex The new Character sex.
      * @return Character object containing relevant character information (race, class, etc.)
      */
-    private Character generateNewCharacter(String selectedRace) {
-        String race, sex;
+    private Character generateNewCharacter(String selectedRace, String selectedSex) {
+        String race;
         String[] firstNames, lastNames, abilities, languages, traits;
         int speed, maxAge, age;
 
@@ -129,19 +173,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             maxAge = Integer.parseInt(object.get("age").toString());
             age = randomAgeSelector.nextInt((maxAge - 25) + 15);    // generate age between 15 and maxAge - 10
-            sex = SEX[randomSexSelector.nextInt(2)];                // generates 0 (male) or 1 (female)
 
             abilities = Utility.cleanString(object.get("ability_bonuses").toString().split(","));
             languages = Utility.cleanString(object.get("languages").toString().split(","));
             traits = Utility.cleanString(object.get("traits").toString().split(","));
 
             // select a random sex-specific name from first and last name String arrays
-            firstNames = Utility.cleanString(object.get("first_names_" + sex.toLowerCase()).toString().split(","));
+            firstNames = Utility.cleanString(object.get("first_names_" + selectedSex.toLowerCase()).toString().split(","));
             lastNames = Utility.cleanString(object.get("last_names").toString().split(","));
             String[] characterName = createCharacterName(firstNames, lastNames);
 
             // create the character
-            character = new Character(race, sex, characterName[0], characterName[1], abilities, languages, traits, age, speed);
+            character = new Character(race, selectedSex, characterName[0], characterName[1], abilities, languages, traits, age, speed);
         } catch (JSONException e) {
             e.printStackTrace();
         }

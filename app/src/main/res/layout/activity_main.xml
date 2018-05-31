@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="5dp"
+    android:padding="10dp"
     tools:context="hawcroftj.github.com.fantasynpc.MainActivity">
 
     <LinearLayout
@@ -17,7 +17,7 @@
             android:id="@+id/tvSelectRace"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/select_race" />
+            android:text="@string/choose_race" />
 
         <Spinner
             android:id="@+id/spRaces"
@@ -26,10 +26,42 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/tvSelectSex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/choose_sex" />
+
+    <RadioGroup
+        android:id="@+id/rgSexGroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <RadioButton
+            android:id="@+id/rbSexRandom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/random" />
+
+        <RadioButton
+            android:id="@+id/rbSexFemale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sex_female" />
+
+        <RadioButton
+            android:id="@+id/rbSexMale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/sex_male" />
+
+    </RadioGroup>
+
     <Button
         android:id="@+id/btnRandom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/random"/>
+        android:text="@string/generate_character"/>
 
 </LinearLayout>

@@ -7,8 +7,13 @@
     <string name="languages_title">Languages: </string>
     <string name="traits_title">Traits: </string>
 
-    <string name="select_race">Select a Race</string>
-    <string name="random">Generate Random NPC</string>
+    <string name="choose_race">Choose Race</string>
+    <string name="choose_sex">Choose Sex</string>
+    <string name="sex_female">Female</string>
+    <string name="sex_male">Male</string>
+
+    <string name="random">Random</string>
+    <string name="generate_character">Generate NPC</string>
 
     <string-array name="races_array">
         <item>Random</item>
