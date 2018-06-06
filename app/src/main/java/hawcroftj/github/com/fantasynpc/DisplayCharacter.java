@@ -58,7 +58,11 @@ public class DisplayCharacter extends AppCompatActivity {
     private String formatArrayForText(String[] stringArr) {
         StringBuilder builder = new StringBuilder();
         for(int i = 0; i < stringArr.length; i++) {
-            builder.append(stringArr[i] + ",\n");
+            builder.append(stringArr[i]);
+            // add comma and line break for all but last item in array
+            if(i != stringArr.length - 1) {
+                builder.append(",\n");
+            }
         }
         return builder.toString();
     }
