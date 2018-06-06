@@ -71,7 +71,7 @@ public final class Utility {
     public static String[] cleanString(String[] dirtyStringArr) {
         String[] cleanedStringArr = new String[dirtyStringArr.length];
         // iterate through and clean each String in the dirty array
-        for(int i = 0; i < dirtyStringArr.length - 1; i++) {
+        for(int i = 0; i < dirtyStringArr.length; i++) {
             cleanedStringArr[i] = cleanString(dirtyStringArr[i]);
         }
         return cleanedStringArr;
