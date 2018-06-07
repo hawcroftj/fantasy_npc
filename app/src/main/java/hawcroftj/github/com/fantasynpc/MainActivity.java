@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -70,7 +71,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onStart();
 
         //region Retrieve Races and Set Defaults
-        availableRaces = this.getResources().getStringArray(R.array.races_array);
+        try {
+            String races = Utility.loadRaceDataFromJSONSource(
+                    getApplicationContext(),
+                    "race_list");
+            JSONObject object = new JSONObject(races);
+            availableRaces = object.get("races").toString().split(",");
+            availableRaces = Utility.cleanString(availableRaces);
+        } catch(JSONException e) { Log.d(TAG, e.getMessage()); }
         randomRaceSelector = new Random();
         randomNameSelector = new Random();
         randomAgeSelector = new Random();
@@ -86,10 +94,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         rgSexGroup.setOnCheckedChangeListener(this);
 
         // create adapter for race selection spinner
-        ArrayAdapter<CharSequence> racesAdapter = ArrayAdapter.createFromResource(
+        ArrayAdapter<String> racesAdapter = new ArrayAdapter<>(
                 this,
-                R.array.races_array,
-                android.R.layout.simple_spinner_item);
+                android.R.layout.simple_spinner_item,
+                availableRaces);
         racesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
         spRaces.setAdapter(racesAdapter);
     }

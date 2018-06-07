@@ -42,7 +42,7 @@ public final class Utility {
     public static String loadRaceDataFromJSONSource(Context context, String selectedRace) {
         // due to the simple adapter used for racesAdapter, and the json file naming convention,
         // space characters (' ') must become a hyphen ('-') in addition to forcing lowercase.
-        // (i.e. "Hill Dwarf" becomes "hill-dwarf")
+        // (i.e. "Race Name" becomes "race-name")
         if(selectedRace.trim().contains(" ")) {
             selectedRace = selectedRace.trim().replace(" ", "-");
         }
@@ -59,7 +59,7 @@ public final class Utility {
         string = string.trim().replace("[", "")
                 .replace("]", "").replace("{", "")
                 .replace("}", "").replace("\"", "").replace(",", "")
-                .replace("description:", "").replace("name:", "");
+                .replace("description:", "").replace("name:", "").replace("races:", "");
         return string;
     }
 
